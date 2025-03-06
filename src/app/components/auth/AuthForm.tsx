@@ -50,7 +50,7 @@ const passwordSchema = z
     autoComplete?: string;
 
   }
-
+  
 
 type FormProps = {
   onSubmit: (data: any) => void;
@@ -73,7 +73,7 @@ const InputField : React.FC<InputFieldProps> = ({id, name, type, label, placehol
       {label}
     </label>
     {name === 'password' && (
-    <a href="/forgot-password" className="text-sm text-blue-500 hover:underline text-[12px]">
+    <a href="/forgot-password" className="text-sm text-[#299D91] font-semibold text-[12px]">
       Forgot Password?
     </a>
   )} 
@@ -86,12 +86,12 @@ const InputField : React.FC<InputFieldProps> = ({id, name, type, label, placehol
         id={id}
         name={name}
         type={inputType}
-        className={`w-full pl-10 pr-10 py-2 border rounded-md focus:outline-none focus:ring-2 text-black ${
+        className={`w-full pl-10 pr-10 py-2 border rounded-md focus:outline-none focus:ring-2 text-black placeholder:text-[12px]  ${
           error ? ' focus:ring-black-200' : 'border-[#4B5768]'
         }`}
         placeholder={placeholder}
         value={value}
-        onChange={onChange}
+        onChange={onChange} 
         onBlur={onBlur}
         autoComplete={autoComplete}
       />
@@ -187,14 +187,15 @@ export const SignupForm: React.FC<FormProps> = ({ onSubmit, isLoading }) => {
 
   return (
     <form onSubmit={handleSubmit} className="w-full max-w-md">
-      <h2 className="text-2xl font-bold mb-6">Create an Account</h2>
+         <h2 className="text-2xl font-bold mb-6 text-[#299D91] text-center">FINEbank.IO</h2>
+      <h2 className="text-lg text-center   font-bold mb-6">Create an account</h2>
       
       <InputField
         id="name"
         name="name"
         type="text"
-        label="Full Name"
-        placeholder="Enter your full name"
+        label="Name"
+        placeholder="Enter name"
         value={formData.name}
         onChange={handleChange}
         onBlur={() => handleBlur('name')}
@@ -244,10 +245,20 @@ export const SignupForm: React.FC<FormProps> = ({ onSubmit, isLoading }) => {
         icon={<FiLock className="text-gray-400" />}
         autoComplete="new-password"
       />
-      
+      <p className='text-[12px] text-[#999DA3] text-center'>By Continuing, you agree to our <a className='text-[#299D91]'>terms of service</a></p>
       <div className="mt-6">
-        <SubmitButton text="Sign Up" isLoading={isLoading} className="w-full py-2 px-4 bg-[#299D91] hover:bg-blue-700 text-white font-medium rounded-md focus:outline-none focus:ring-2 focus:ring-blue-200 transition duration-200" />
+        <SubmitButton text="Sign up" isLoading={isLoading} className="w-full py-2 px-4  bg-[#299D91] hover:bg-blue-700 text-white font-semibold rounded-[4px] focus:outline-none focus:ring-2 focus:ring-blue-200 transition duration-200" />
       </div>
+      <div className='mt-4 w-[100%]  items-center justify-center grid grid-cols-3  gap-4'>
+          <hr/>
+          <p className='text-[#999DA3] lg:text-[16px] text-[12px]'>or sign up with</p>
+          <hr />
+        </div>
+        <div className=' relative items-center'>
+          <SubmitButton text="Continue with Google" isLoading={isLoading} className='w-full mt-4 py-2 px-4 bg-[#E4E7EB] hover:bg-blue-700 hover:text-white text-[#4B5768] text-sm  font-medium rounded-md focus:outline-none focus:ring-2 focus:ring-blue-200 transition duration-200'
+          />
+          <FcGoogle  className='  absolute top-[62%] ml-10 md:ml-[80px]    transform -translate-y-1/2 w-[24px] h-[24px] '/>
+        </div>
     </form>
   );
 };
@@ -266,7 +277,7 @@ export const LoginForm: React.FC<FormProps> = ({ onSubmit, isLoading }) => {
     
     // Validate field if it's been touched
     if (touched[name as keyof LoginFormData]) {
-      validateField(name as keyof LoginFormData);
+      validateField(name as keyof LoginFormData); 
     }
   };
 
@@ -298,7 +309,7 @@ export const LoginForm: React.FC<FormProps> = ({ onSubmit, isLoading }) => {
       return { ...acc, [key]: true };
     }, {}) as Record<keyof LoginFormData, boolean>;
     
-    setTouched(allTouched);
+    setTouched(allTouched); 
     
     // Validate all fields
     try {
@@ -348,25 +359,23 @@ export const LoginForm: React.FC<FormProps> = ({ onSubmit, isLoading }) => {
         autoComplete="current-password"
       />
       
-      {/* <div className="flex justify-end mb-4">
-        <a href="/forgot-password" className="text-sm text-blue-600 hover:text-blue-800">
-          Forgot Password?
-        </a>
-      </div> */}
+      
       
       <div className="mt-6  "> 
         <SubmitButton text="Login" isLoading={isLoading} className='w-full py-2 px-4 bg-[#299D91] hover:bg-blue-700 text-white font-medium rounded-md focus:outline-none focus:ring-2 focus:ring-blue-200 transition duration-200'/>
-        <div className='mt-4 w-[100%]  items-center justify-center grid grid-cols-3 gap-4'>
+        <div className='mt-4 w-[100%]  items-center justify-center grid grid-cols-3  gap-4'>
           <hr/>
-          <p className='text-[#999DA3]'>or sign in with</p>
+          <p className='text-[#999DA3] lg:text-[16px] text-[12px]'>or sign in with</p>
           <hr />
         </div>
         <div className=' relative items-center'>
-          <SubmitButton text="Continue with Google" isLoading={isLoading} className='w-full mt-4 py-2 px-4 bg-[#E4E7EB] hover:bg-blue-700 text-[#4B5768] text-sm  font-medium rounded-md focus:outline-none focus:ring-2 focus:ring-blue-200 transition duration-200'
+          <SubmitButton text="Continue with Google" isLoading={isLoading} className='w-full mt-4 py-2 px-4 bg-[#E4E7EB] hover:bg-blue-700 hover:text-white text-[#4B5768] text-sm  font-medium rounded-md focus:outline-none focus:ring-2 focus:ring-blue-200 transition duration-200'
           />
-          <FcGoogle  className='  absolute top-[62%] ml-[80px]   transform -translate-y-1/2 w-[24px] h-[24px]'/>
+          <FcGoogle  className='  absolute top-[62%] ml-10 md:ml-[80px]    transform -translate-y-1/2 w-[24px] h-[24px] '/>
         </div>
-       
+        <div className='mt-10 text-center'>
+        <a href='/signup' className='mt-10 text-center text-[12px] text-[#299D91] font-semibold'>Create an account</a>
+        </div>
       </div>
     </form>
   );
@@ -432,9 +441,10 @@ export const ForgotPasswordForm: React.FC<FormProps> = ({ onSubmit, isLoading })
 
   return (
     <form onSubmit={handleSubmit} className="w-full max-w-md">
-      <h2 className="text-2xl font-bold mb-6">Reset Password</h2>
-      <p className="mb-4 text-gray-600">
-        Enter your email address and we'll send you a link to reset your password.
+        <h2 className="text-2xl font-bold mb-4 text-[#299D91] text-center">FINEbank.IO</h2>
+      <h2 className="text-[16px] font-bold mb-2 text-center">Forgot Password ?</h2>
+      <p className="mb-4 text-gray-600 text-sm text-center max-w-[80%] mx-auto">
+        Enter your email address to get the password reset link.
       </p>
       
       <InputField
@@ -452,11 +462,11 @@ export const ForgotPasswordForm: React.FC<FormProps> = ({ onSubmit, isLoading })
       />
       
       <div className="mt-6">
-        <SubmitButton text="Send Reset Link" isLoading={isLoading} className='w-full py-2 px-4 bg-[#299D91] hover:bg-blue-700 text-white font-medium rounded-md focus:outline-none focus:ring-2 focus:ring-blue-200 transition duration-200'/>
+        <SubmitButton text="Password Reset" isLoading={isLoading} className='w-full py-2 px-4 bg-[#299D91] hover:bg-blue-700 text-white font-medium rounded-[4px] focus:outline-none focus:ring-2 focus:ring-blue-200 transition duration-200'/>
       </div>
       
       <div className="mt-4 text-center">
-        <a href="/login" className="text-sm text-blue-600 hover:text-blue-800">
+        <a href="/login" className="text-sm text-[#999DA3] font-semibold hover:text-blue-800">
           Back to Login
         </a>
       </div>

@@ -32,7 +32,7 @@ const SignupPage: React.FC = () => {
 
   return (
     <div className="min-h-screen flex items-center justify-center bg-gray-50 py-12 px-4 sm:px-6 lg:px-8">
-      <div className="w-full max-w-md space-y-8 bg-white p-8 rounded-lg shadow">
+      <div className="w-full max-w-md space-y-8  p-8  ">
         {success ? (
           <div className="text-center">
             <h2 className="text-2xl font-bold text-green-600 mb-4">Account Created!</h2>
@@ -57,8 +57,8 @@ const SignupPage: React.FC = () => {
             <div className="mt-6 text-center">
               <p className="text-sm text-gray-600">
                 Already have an account?{' '}
-                <a href="/login" className="font-medium text-blue-600 hover:text-blue-800">
-                  Log In
+                <a href="/login" className=" text-[#299D91] font-semibold hover:text-blue-800">
+                  Sign in here
                 </a>
               </p>
             </div>
