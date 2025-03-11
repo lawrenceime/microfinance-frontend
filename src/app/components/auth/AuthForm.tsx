@@ -6,6 +6,7 @@ import SubmitButton from '../Button';
 import { FcGoogle } from "react-icons/fc";
 import { apiRequest } from '@/lib/api';
 import { useRouter } from 'next/navigation';
+import toast from "react-hot-toast";
 
 // ============= Zod Schemas =============
 const emailSchema = z.string().email('Please enter a valid email address');
@@ -184,9 +185,16 @@ export const SignupForm: React.FC<FormProps> = ({ onSubmit, isLoading }) => {
         const response = await apiRequest('signup', 'POST', validData);
         // Store token and redirect
         localStorage.setItem('token', response.token)
-        router.push('/login')
-    } catch (error) {
+         // Show success toast before redirecting
+        toast.success("Account created successfully! Redirecting...");
+
+      setTimeout(() => {
+        router.push("/login");
+      }, 2000); // Delay to show toast
+       
+    } catch (error:any) {
       if (error instanceof z.ZodError) {
+        toast.error(error.message);
         const newErrors: Partial<Record<keyof SignupFormData, string>> = {};
         error.errors.forEach((err) => {
           const path = err.path[0] as keyof SignupFormData;
@@ -336,8 +344,14 @@ export const LoginForm: React.FC<FormProps> = ({ onSubmit, isLoading }) => {
       const response = await apiRequest('login', 'POST', validData);
       // Store token and redirect
       localStorage.setItem('token', response.token)
-      router.push('/dashboard')
+       // Show success toast before redirecting
+      toast.success("Login successful! Redirecting...");
+
+      setTimeout(() => {
+        router.push("/dashboard");
+      }, 2000); // Delay to show toast
     } catch (error:any) {
+      toast.error(error.message);
       if (error instanceof z.ZodError) {
         const newErrors: Partial<Record<keyof LoginFormData, string>> = {};
         error.errors.forEach((err) => {
@@ -461,9 +475,10 @@ export const ForgotPasswordForm: React.FC<FormProps> = ({ onSubmit, isLoading })
        const response = await apiRequest('forgot-password', 'POST', validData);
        // Store token and redirect
        localStorage.setItem('token', response.token)
-       router.push('/dashboard')
+       toast.success("Password reset link sent to your email!");
 
-    } catch (error) {
+    } catch (error:any) {
+      toast.error(error.message);
       if (error instanceof z.ZodError) {
         const newErrors: Partial<Record<keyof ForgotPasswordFormData, string>> = {};
         error.errors.forEach((err) => {
