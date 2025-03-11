@@ -3,6 +3,7 @@
 import React, { useState } from 'react';
 import { LoginForm } from '../components/auth/AuthForm';
 import { set } from 'zod';
+import { apiRequest } from '@/lib/api';
 
 
 const LoginPage: React.FC = () => {
@@ -25,7 +26,7 @@ const LoginPage: React.FC = () => {
             console.error(err);
         }finally{ 
             setIsLoading(false);
-        }
+        } 
     }
     return (
         <div className="min-h-screen flex items-center justify-center bg-gray-50 py-12 px-4 sm:px-6 lg:px-8">

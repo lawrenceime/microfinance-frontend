@@ -4,6 +4,8 @@ import { z } from 'zod';
 import { FiUser, FiMail, FiLock, FiEye, FiEyeOff } from 'react-icons/fi';
 import SubmitButton from '../Button';
 import { FcGoogle } from "react-icons/fc";
+import { apiRequest } from '@/lib/api';
+import { useRouter } from 'next/navigation';
 
 // ============= Zod Schemas =============
 const emailSchema = z.string().email('Please enter a valid email address');
@@ -120,6 +122,8 @@ export const SignupForm: React.FC<FormProps> = ({ onSubmit, isLoading }) => {
   });
   const [errors, setErrors] = useState<Partial<Record<keyof SignupFormData, string>>>({});
   const [touched, setTouched] = useState<Partial<Record<keyof SignupFormData, boolean>>>({});
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const router = useRouter();
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
@@ -161,6 +165,9 @@ export const SignupForm: React.FC<FormProps> = ({ onSubmit, isLoading }) => {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    setIsSubmitting(true);
+    setErrors({});
+
     
     // Mark all fields as touched
     const allTouched = Object.keys(formData).reduce((acc, key) => {
@@ -172,7 +179,12 @@ export const SignupForm: React.FC<FormProps> = ({ onSubmit, isLoading }) => {
     // Validate all fields
     try {
       const validData = signupSchema.parse(formData);
-      onSubmit(validData);
+      // onSubmit(validData);
+        // Call API to authenticate user
+        const response = await apiRequest('signup', 'POST', validData);
+        // Store token and redirect
+        localStorage.setItem('token', response.token)
+        router.push('/login')
     } catch (error) {
       if (error instanceof z.ZodError) {
         const newErrors: Partial<Record<keyof SignupFormData, string>> = {};
@@ -247,7 +259,7 @@ export const SignupForm: React.FC<FormProps> = ({ onSubmit, isLoading }) => {
       />
       <p className='text-[12px] text-[#999DA3] text-center'>By Continuing, you agree to our <a className='text-[#299D91]'>terms of service</a></p>
       <div className="mt-6">
-        <SubmitButton text="Sign up" isLoading={isLoading} className="w-full py-2 px-4  bg-[#299D91] hover:bg-blue-700 text-white font-semibold rounded-[4px] focus:outline-none focus:ring-2 focus:ring-blue-200 transition duration-200" />
+        <SubmitButton text={isSubmitting ? "Signing up" : "Sign up"} isLoading={isLoading} className="w-full py-2 px-4  bg-[#299D91] hover:bg-blue-700 text-white font-semibold rounded-[4px] focus:outline-none focus:ring-2 focus:ring-blue-200 transition duration-200" />
       </div>
       <div className='mt-4 w-[100%]  items-center justify-center grid grid-cols-3  gap-4'>
           <hr/>
@@ -270,6 +282,8 @@ export const LoginForm: React.FC<FormProps> = ({ onSubmit, isLoading }) => {
   });
   const [errors, setErrors] = useState<Partial<Record<keyof LoginFormData, string>>>({});
   const [touched, setTouched] = useState<Partial<Record<keyof LoginFormData, boolean>>>({});
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const router = useRouter();
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
@@ -278,7 +292,7 @@ export const LoginForm: React.FC<FormProps> = ({ onSubmit, isLoading }) => {
     // Validate field if it's been touched
     if (touched[name as keyof LoginFormData]) {
       validateField(name as keyof LoginFormData); 
-    }
+    }     
   };
 
   const handleBlur = (field: keyof LoginFormData) => {
@@ -303,19 +317,27 @@ export const LoginForm: React.FC<FormProps> = ({ onSubmit, isLoading }) => {
   
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    setIsSubmitting(true);
+    setErrors({});
+
     
     // Mark all fields as touched
     const allTouched = Object.keys(formData).reduce((acc, key) => {
       return { ...acc, [key]: true };
     }, {}) as Record<keyof LoginFormData, boolean>;
     
-    setTouched(allTouched); 
+    setTouched(allTouched);  
     
     // Validate all fields
     try {
       const validData = loginSchema.parse(formData);
-      onSubmit(validData);
-    } catch (error) {
+      // onSubmit(validData);
+      // Call API to authenticate user
+      const response = await apiRequest('login', 'POST', validData);
+      // Store token and redirect
+      localStorage.setItem('token', response.token)
+      router.push('/dashboard')
+    } catch (error:any) {
       if (error instanceof z.ZodError) {
         const newErrors: Partial<Record<keyof LoginFormData, string>> = {};
         error.errors.forEach((err) => {
@@ -323,7 +345,11 @@ export const LoginForm: React.FC<FormProps> = ({ onSubmit, isLoading }) => {
           newErrors[path] = err.message;
         });
         setErrors(newErrors);
+      }else{
+        setErrors({password: error.message})
       }
+    }finally{
+      setIsSubmitting(false);
     }
   };
 
@@ -388,6 +414,8 @@ export const ForgotPasswordForm: React.FC<FormProps> = ({ onSubmit, isLoading })
   });
   const [errors, setErrors] = useState<Partial<Record<keyof ForgotPasswordFormData, string>>>({});
   const [touched, setTouched] = useState<Partial<Record<keyof ForgotPasswordFormData, boolean>>>({});
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const router = useRouter();
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
@@ -419,6 +447,8 @@ export const ForgotPasswordForm: React.FC<FormProps> = ({ onSubmit, isLoading })
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    setIsSubmitting(true);
+    setErrors({});
     
     // Mark all fields as touched
     setTouched({ email: true });
@@ -426,7 +456,13 @@ export const ForgotPasswordForm: React.FC<FormProps> = ({ onSubmit, isLoading })
     // Validate all fields
     try {
       const validData = forgotPasswordSchema.parse(formData);
-      onSubmit(validData);
+      // onSubmit(validData);
+       // Call API to authenticate user
+       const response = await apiRequest('forgot-password', 'POST', validData);
+       // Store token and redirect
+       localStorage.setItem('token', response.token)
+       router.push('/dashboard')
+
     } catch (error) {
       if (error instanceof z.ZodError) {
         const newErrors: Partial<Record<keyof ForgotPasswordFormData, string>> = {};
@@ -462,7 +498,7 @@ export const ForgotPasswordForm: React.FC<FormProps> = ({ onSubmit, isLoading })
       />
       
       <div className="mt-6">
-        <SubmitButton text="Password Reset" isLoading={isLoading} className='w-full py-2 px-4 bg-[#299D91] hover:bg-blue-700 text-white font-medium rounded-[4px] focus:outline-none focus:ring-2 focus:ring-blue-200 transition duration-200'/>
+        <SubmitButton text={isSubmitting ? "Sending...":"Password Resrt"} isLoading={isLoading} className='w-full py-2 px-4 bg-[#299D91] hover:bg-blue-700 text-white font-medium rounded-[4px] focus:outline-none focus:ring-2 focus:ring-blue-200 transition duration-200'/>
       </div>
       
       <div className="mt-4 text-center">
